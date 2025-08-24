@@ -20,7 +20,7 @@ trait ApiResponse
             'success' => false,
             'message' => $message,
             'errors' => $errors,
-             'next' => $next,
+            'next' => $next,
         ], $code);
     }
 }

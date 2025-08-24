@@ -23,8 +23,7 @@ class EmployeeController extends Controller
 
         return $this->successResponse(
             EmployeeResource::collection($employees),
-            'Employees retrieved successfully'
-            , 200, $employees->nextPageUrl()
+            'Employees retrieved successfully', 200, $employees->nextPageUrl()
         );
     }
 

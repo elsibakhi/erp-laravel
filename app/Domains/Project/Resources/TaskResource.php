@@ -14,9 +14,9 @@ class TaskResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-           return [
+        return [
             ...parent::toArray($request),
             'project' => new ProjectResource($this->whenLoaded('project')),
-    ];
+        ];
     }
 }

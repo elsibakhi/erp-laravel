@@ -17,7 +17,7 @@ class InvoiceResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
-             'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'employee' => new EmployeeResource($this->whenLoaded('employee')),
 
         ];
     }

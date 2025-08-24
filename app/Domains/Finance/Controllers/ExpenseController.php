@@ -27,8 +27,7 @@ class ExpenseController extends Controller
 
         return $this->successResponse(
             ExpenseResource::collection($expenses),
-            'Expenses retrieved successfully'
-            , 200, $expenses->nextPageUrl()
+            'Expenses retrieved successfully', 200, $expenses->nextPageUrl()
         );
     }
 

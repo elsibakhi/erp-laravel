@@ -20,8 +20,7 @@ class ProjectController extends Controller
 
         return $this->successResponse(
             ProjectResource::collection($projects),
-            'projects retrieved successfully'
-            , 200, $projects->nextPageUrl()
+            'projects retrieved successfully', 200, $projects->nextPageUrl()
         );
     }
 

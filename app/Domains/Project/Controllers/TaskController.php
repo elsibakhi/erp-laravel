@@ -21,8 +21,7 @@ class TaskController extends Controller
 
         return $this->successResponse(
             TaskResource::collection($tasks),
-            'Tasks retrieved successfully'
-            , 200, $tasks->nextPageUrl()
+            'Tasks retrieved successfully', 200, $tasks->nextPageUrl()
         );
     }
 

@@ -27,8 +27,7 @@ class InvoiceController extends Controller
 
         return $this->successResponse(
             InvoiceResource::collection($invoices),
-            'Invoices retrieved successfully'
-            , 200, $invoices->nextPageUrl()
+            'Invoices retrieved successfully', 200, $invoices->nextPageUrl()
         );
     }
 

@@ -17,8 +17,8 @@ class EmployeeResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
-            'user'=>$this->whenLoaded(('user')),
-            'department'=>new DepartmentResource($this->whenLoaded(('department'))),
+            'user' => $this->whenLoaded(('user')),
+            'department' => new DepartmentResource($this->whenLoaded(('department'))),
 
         ];
     }

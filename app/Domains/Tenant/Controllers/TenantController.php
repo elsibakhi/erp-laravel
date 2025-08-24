@@ -21,8 +21,7 @@ class TenantController extends Controller
 
         return $this->successResponse(
             TenantResource::collection($tenants),
-            'Tenants retrieved successfully'
-            , 200, $tenants->nextPageUrl()
+            'Tenants retrieved successfully', 200, $tenants->nextPageUrl()
         );
     }
 

@@ -21,8 +21,7 @@ class DepartmentController extends Controller
 
         return $this->successResponse(
             DepartmentResource::collection($departments),
-            'departments retrieved successfully'
-            , 200, $departments->nextPageUrl()
+            'departments retrieved successfully', 200, $departments->nextPageUrl()
         );
     }
 

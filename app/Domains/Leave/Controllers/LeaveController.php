@@ -24,11 +24,11 @@ class LeaveController extends Controller
     {
 
         $leave_requests = LeaveRequest::with('employee')->paginate(10);
-    
+
         return $this->successResponse(
             LeaveResource::collection($leave_requests),
             'Leave requests retrieved successfully',
-            200, 
+            200,
             $leave_requests->nextPageUrl()
         );
     }
@@ -46,8 +46,7 @@ class LeaveController extends Controller
 
         return $this->successResponse(
             LeaveResource::collection($leave_requests),
-            'Leave requests retrieved successfully'
-            , 200, $leave_requests->nextPageUrl()
+            'Leave requests retrieved successfully', 200, $leave_requests->nextPageUrl()
         );
     }
 
