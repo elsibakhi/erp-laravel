@@ -17,11 +17,12 @@ class TaskController extends Controller
     public function index(Project $project)
     {
 
-        $tasks = $project->tasks()->get();
+        $tasks = $project->tasks()->paginate(10);
 
         return $this->successResponse(
             TaskResource::collection($tasks),
             'Tasks retrieved successfully'
+            , 200, $tasks->nextPageUrl()
         );
     }
 

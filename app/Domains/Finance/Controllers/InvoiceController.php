@@ -23,11 +23,12 @@ class InvoiceController extends Controller
     public function index()
     {
 
-        $invoices = Invoice::with('employee')->get();
+        $invoices = Invoice::with('employee')->paginate(10);
 
         return $this->successResponse(
             InvoiceResource::collection($invoices),
             'Invoices retrieved successfully'
+            , 200, $invoices->nextPageUrl()
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Finance\Resources;
 
+use App\Domains\Employee\Resources\EmployeeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,7 @@ class InvoiceResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
-            'employee' => $this->whenLoaded('employee'),
+             'employee' => new EmployeeResource($this->whenLoaded('employee')),
 
         ];
     }

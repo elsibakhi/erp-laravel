@@ -19,11 +19,12 @@ class EmployeeController extends Controller
     public function index()
     {
 
-        $employees = Employee::with('user')->get();
+        $employees = Employee::with('department')->paginate(10);
 
         return $this->successResponse(
             EmployeeResource::collection($employees),
             'Employees retrieved successfully'
+            , 200, $employees->nextPageUrl()
         );
     }
 

@@ -17,11 +17,12 @@ class TenantController extends Controller
     public function index()
     {
 
-        $tenants = Tenant::all();
+        $tenants = Tenant::paginate(10);
 
         return $this->successResponse(
             TenantResource::collection($tenants),
             'Tenants retrieved successfully'
+            , 200, $tenants->nextPageUrl()
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Employee\Resources;
 
+use App\Domains\Department\Resources\DepartmentResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,12 +17,8 @@ class EmployeeResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
-
-            'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
-                'email' => $this->user->email,
-            ],
+            'user'=>$this->whenLoaded(('user')),
+            'department'=>new DepartmentResource($this->whenLoaded(('department'))),
 
         ];
     }

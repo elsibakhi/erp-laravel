@@ -23,11 +23,13 @@ class LeaveController extends Controller
     public function adminLeaveRequestsList()
     {
 
-        $leave_requests = LeaveRequest::with('employee')->get();
-
+        $leave_requests = LeaveRequest::with('employee')->paginate(10);
+    
         return $this->successResponse(
             LeaveResource::collection($leave_requests),
-            'Leave requests retrieved successfully'
+            'Leave requests retrieved successfully',
+            200, 
+            $leave_requests->nextPageUrl()
         );
     }
 
@@ -40,11 +42,12 @@ class LeaveController extends Controller
     {
 
         $employee = auth()->guard('tenant-api')->user();
-        $leave_requests = LeaveRequest::with('employee')->where('employee_id', $employee->id)->get();
+        $leave_requests = LeaveRequest::with('employee')->where('employee_id', $employee->id)->paginate(10);
 
         return $this->successResponse(
             LeaveResource::collection($leave_requests),
             'Leave requests retrieved successfully'
+            , 200, $leave_requests->nextPageUrl()
         );
     }
 

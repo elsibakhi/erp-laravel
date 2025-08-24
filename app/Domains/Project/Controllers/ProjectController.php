@@ -16,11 +16,12 @@ class ProjectController extends Controller
     public function index()
     {
 
-        $projects = Project::all();
+        $projects = Project::with('tasks')->paginate(10);
 
         return $this->successResponse(
             ProjectResource::collection($projects),
             'projects retrieved successfully'
+            , 200, $projects->nextPageUrl()
         );
     }
 

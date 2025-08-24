@@ -17,11 +17,12 @@ class DepartmentController extends Controller
     public function index()
     {
 
-        $departments = Department::all();
+        $departments = Department::paginate(10);
 
         return $this->successResponse(
             DepartmentResource::collection($departments),
             'departments retrieved successfully'
+            , 200, $departments->nextPageUrl()
         );
     }
 

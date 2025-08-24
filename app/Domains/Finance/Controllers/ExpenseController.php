@@ -23,11 +23,12 @@ class ExpenseController extends Controller
     public function index()
     {
 
-        $expenses = Expense::with('employee')->get();
+        $expenses = Expense::with('employee')->paginate(20);
 
         return $this->successResponse(
             ExpenseResource::collection($expenses),
             'Expenses retrieved successfully'
+            , 200, $expenses->nextPageUrl()
         );
     }
 
