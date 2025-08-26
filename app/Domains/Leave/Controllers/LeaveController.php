@@ -6,14 +6,15 @@ use App\Domains\Leave\Models\LeaveRequest;
 use App\Domains\Leave\Requests\LeaveChangeStatusRequest;
 use App\Domains\Leave\Requests\StoreLeaveRequest;
 use App\Domains\Leave\Resources\LeaveResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
+use App\Traits\TenantGuard;
 use Illuminate\Http\JsonResponse;
 
 class LeaveController extends Controller
 {
     //
-    use ApiResponse;
+    use TenantGuard;
 
     /**
      * list leave requests for admin
@@ -22,10 +23,10 @@ class LeaveController extends Controller
      */
     public function adminLeaveRequestsList()
     {
-
+        authorizePermission('view all leave requests', $this->getGuard());
         $leave_requests = LeaveRequest::with('employee')->paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             LeaveResource::collection($leave_requests),
             'Leave requests retrieved successfully',
             200,
@@ -40,11 +41,11 @@ class LeaveController extends Controller
      */
     public function employeeLeaveRequestsList()
     {
-
+        authorizePermission('view employee leave requests', $this->getGuard());
         $employee = auth()->guard('tenant-api')->user();
         $leave_requests = LeaveRequest::with('employee')->where('employee_id', $employee->id)->paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             LeaveResource::collection($leave_requests),
             'Leave requests retrieved successfully', 200, $leave_requests->nextPageUrl()
         );
@@ -58,6 +59,8 @@ class LeaveController extends Controller
     public function store(StoreLeaveRequest $request)
     {
 
+        authorizePermission('store leave requests', $this->getGuard());
+
         $request_data = $request->validated();
         $server_made_data = [
             'employee_id' => auth()->guard('tenant-api')->id(),
@@ -68,7 +71,7 @@ class LeaveController extends Controller
 
         $leave_request = LeaveRequest::create($leave_data);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new LeaveResource($leave_request),
             'Leave request created successfully',
             201
@@ -83,10 +86,10 @@ class LeaveController extends Controller
      */
     public function update(StoreLeaveRequest $request, LeaveRequest $leave)
     {
-
+        authorizePermission('update leave requests', $this->getGuard());
         $leave->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new LeaveResource($leave),
             'Leave request updated successfully'
         );
@@ -99,10 +102,10 @@ class LeaveController extends Controller
      */
     public function changeStatus(LeaveChangeStatusRequest $request, LeaveRequest $leave)
     {
-
+        authorizePermission('change leave requests status', $this->getGuard());
         $leave->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new LeaveResource($leave),
             'Leave request status changed successfully'
         );
@@ -115,10 +118,10 @@ class LeaveController extends Controller
      */
     public function destroy(LeaveRequest $leave)
     {
-
+        authorizePermission('destroy leave requests', $this->getGuard());
         $leave->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Leave request deleted successfully'
         );

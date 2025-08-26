@@ -14,6 +14,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->singleton('apiresponse', function ($app) {
+            return new \App\Services\ApiResponseService;
+        });
     }
 
     /**

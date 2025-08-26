@@ -4,42 +4,40 @@ namespace App\Domains\Authentication\Controllers;
 
 use App\Domains\Authentication\Requests\LoginRequest;
 use App\Domains\Authentication\Requests\RegisterRequest;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\LandlordUser;
 use App\Models\TenantUser;
 use App\Models\User;
-use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
 {
-    use ApiResponse;
+    // public function register(RegisterRequest $request)
+    // {
 
-    public function register(RegisterRequest $request)
-    {
+    //     $request->routeIs('register.base') ? DB::setDefaultConnection('landlord') : DB::setDefaultConnection('tenant');
 
-        $request->routeIs('register.base') ? DB::setDefaultConnection('landlord') : DB::setDefaultConnection('tenant');
+    //     $requestData = [
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'password' => bcrypt($request->password),
+    //     ];
+    //     $user = $request->routeIs('register.base') ?
+    //     LandlordUser::create($requestData) :
+    //     TenantUser::create($requestData);
 
-        $requestData = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ];
-        $user = $request->routeIs('register.base') ?
-        LandlordUser::create($requestData) :
-        TenantUser::create($requestData);
+    //     $data = [
+    //         'token' => $user->createToken('auth_token')->plainTextToken,
+    //     ];
 
-        $data = [
-            'token' => $user->createToken('auth_token')->plainTextToken,
-        ];
-
-        return $this->successResponse(
-            $data,
-            'User created successfully',
-            201
-        );
-    }
+    //     return ApiResponse::success(
+    //         $data,
+    //         'User created successfully',
+    //         201
+    //     );
+    // }
 
     public function login(LoginRequest $request)
     {
@@ -60,7 +58,7 @@ class AuthenticationController extends Controller
             'token' => $user->createToken('auth_token')->plainTextToken,
         ];
 
-        return $this->successResponse(
+        return ApiResponse::success(
             $data,
             'Login successful',
             200

@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Authentication\Controllers\AuthenticationController;
+use App\Domains\Authentication\Controllers\UserController;
 use App\Domains\Department\Controllers\DepartmentController;
 use App\Domains\Employee\Controllers\EmployeeController;
 use App\Domains\Finance\Controllers\ExpenseController;
@@ -11,7 +12,6 @@ use App\Domains\Project\Controllers\TaskController;
 use App\Domains\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/base/register', [AuthenticationController::class, 'register'])->name('register.base');
 Route::post('/base/login', [AuthenticationController::class, 'login'])->name('login.base');
 
 Route::middleware(['auth:landlord-api'])->group(function () {
@@ -26,12 +26,17 @@ Route::middleware('tenant')->group(function () {
 
         return view('welcome');
     });
-    Route::post('/register', [AuthenticationController::class, 'register'])->name('register');
+
     Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
 
 });
 
 Route::middleware(['tenant', 'auth:tenant-api'])->group(function () {
+
+    // users
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}/role/assign', [UserController::class, 'assignRole'])->name('users.role.assign');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // departments
     Route::apiResource('departments', DepartmentController::class)->except('show');

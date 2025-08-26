@@ -3,17 +3,17 @@
 namespace App\Domains\Finance\Controllers;
 
 use App\Domains\Finance\Models\Expense;
-use App\Domains\Finance\Models\Invoice;
 use App\Domains\Finance\Requests\StoreExpenseRequest;
 use App\Domains\Finance\Resources\ExpenseResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
+use App\Traits\TenantGuard;
 use Illuminate\Http\JsonResponse;
 
 class ExpenseController extends Controller
 {
     //
-    use ApiResponse;
+    use TenantGuard;
 
     /**
      * list invoices
@@ -22,10 +22,10 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-
+        authorizePermission('view expenses', $this->getGuard());
         $expenses = Expense::with('employee')->paginate(20);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             ExpenseResource::collection($expenses),
             'Expenses retrieved successfully', 200, $expenses->nextPageUrl()
         );
@@ -38,7 +38,7 @@ class ExpenseController extends Controller
      */
     public function store(StoreExpenseRequest $request)
     {
-
+        authorizePermission('store expenses', $this->getGuard());
         $request_data = $request->validated();
         $server_made_data = [
             'added_by' => auth()->guard('tenant-api')->id(),
@@ -49,7 +49,7 @@ class ExpenseController extends Controller
 
         $expense = Expense::create($expense_data);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new ExpenseResource($expense),
             'Expense created successfully',
             201
@@ -64,10 +64,10 @@ class ExpenseController extends Controller
      */
     public function update(StoreExpenseRequest $request, Expense $expense)
     {
-
+        authorizePermission('update expenses', $this->getGuard());
         $expense->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new ExpenseResource($expense),
             'Expense updated successfully'
         );
@@ -80,10 +80,10 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
-
+        authorizePermission('destroy expenses', $this->getGuard());
         $expense->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Expense deleted successfully'
         );

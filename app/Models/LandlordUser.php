@@ -8,12 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Spatie\Permission\Traits\HasRoles;
 
 class LandlordUser extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory,Notifiable
-        ,UsesLandlordConnection;
+    use HasApiTokens, HasFactory,HasRoles
+        ,Notifiable,UsesLandlordConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -49,5 +50,10 @@ class LandlordUser extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function guardName()
+    {
+        return 'landlord-api';
     }
 }

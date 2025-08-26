@@ -6,22 +6,23 @@ use App\Domains\Employee\Models\Employee;
 use App\Domains\Employee\Requests\StoreEmployeeRequest;
 use App\Domains\Employee\Requests\UpdateEmployeeRequest;
 use App\Domains\Employee\Resources\EmployeeResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\TenantUser;
-use App\Traits\ApiResponse;
+use App\Traits\TenantGuard;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
     //
-    use ApiResponse;
+    use TenantGuard;
 
     public function index()
     {
-
+        authorizePermission('view employees', $this->getGuard());
         $employees = Employee::with('department')->paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             EmployeeResource::collection($employees),
             'Employees retrieved successfully', 200, $employees->nextPageUrl()
         );
@@ -29,6 +30,7 @@ class EmployeeController extends Controller
 
     public function store(StoreEmployeeRequest $request)
     {
+        authorizePermission('store employees', $this->getGuard());
 
         return DB::transaction(function () use ($request) {
 
@@ -47,7 +49,7 @@ class EmployeeController extends Controller
                 'status' => $request->status,
             ]);
 
-            return $this->successResponse(
+            return ApiResponse::success(
                 new EmployeeResource($employee),
                 'Employee created successfully',
                 201
@@ -59,7 +61,7 @@ class EmployeeController extends Controller
 
     public function update(UpdateEmployeeRequest $request, TenantUser $user)
     {
-
+        authorizePermission('update employees', $this->getGuard());
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
@@ -75,7 +77,7 @@ class EmployeeController extends Controller
             'status' => $request->status,
         ]);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new EmployeeResource($user->employee),
             'Employee updated successfully'
         );
@@ -83,10 +85,10 @@ class EmployeeController extends Controller
 
     public function destroy(TenantUser $user)
     {
-
+        authorizePermission('destroy employees', $this->getGuard());
         $user->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Employee deleted successfully'
         );

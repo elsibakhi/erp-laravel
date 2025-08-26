@@ -6,20 +6,21 @@ use App\Domains\Tenant\Models\Tenant;
 use App\Domains\Tenant\Requests\StoreTenantRequest;
 use App\Domains\Tenant\Requests\UpdateTenantRequest;
 use App\Domains\Tenant\Resources\TenantResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
+use App\Traits\LandlordGuard;
 
 class TenantController extends Controller
 {
     //
-    use ApiResponse;
+    use LandlordGuard;
 
     public function index()
     {
-
+        authorizePermission('view tenants', $this->getGuard());
         $tenants = Tenant::paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             TenantResource::collection($tenants),
             'Tenants retrieved successfully', 200, $tenants->nextPageUrl()
         );
@@ -27,9 +28,10 @@ class TenantController extends Controller
 
     public function store(StoreTenantRequest $request)
     {
+        authorizePermission('store tenants', $this->getGuard());
         $tenant = Tenant::create($request->all());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new TenantResource($tenant),
             'Tenant created successfully',
             201
@@ -38,10 +40,11 @@ class TenantController extends Controller
 
     public function update(UpdateTenantRequest $request, $tenant)
     {
+        authorizePermission('update tenants', $this->getGuard());
         $tenant = Tenant::findOrFail($tenant);
         $tenant->update($request->all());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new TenantResource($tenant),
             'Tenant updated successfully'
         );
@@ -49,10 +52,11 @@ class TenantController extends Controller
 
     public function destroy($tenant)
     {
+        authorizePermission('destroy tenants', $this->getGuard());
         $tenant = Tenant::findOrFail($tenant);
         $tenant->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Tenant deleted successfully'
         );

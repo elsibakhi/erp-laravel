@@ -6,14 +6,15 @@ use App\Domains\Finance\Models\Invoice;
 use App\Domains\Finance\Requests\InvoiceChangeStatusRequest;
 use App\Domains\Finance\Requests\StoreInvoiceRequest;
 use App\Domains\Finance\Resources\InvoiceResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
+use App\Traits\TenantGuard;
 use Illuminate\Http\JsonResponse;
 
 class InvoiceController extends Controller
 {
     //
-    use ApiResponse;
+    use TenantGuard;
 
     /**
      * list invoices
@@ -22,10 +23,10 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-
+        authorizePermission('view invoices', $this->getGuard());
         $invoices = Invoice::with('employee')->paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             InvoiceResource::collection($invoices),
             'Invoices retrieved successfully', 200, $invoices->nextPageUrl()
         );
@@ -38,7 +39,7 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request)
     {
-
+        authorizePermission('store invoices', $this->getGuard());
         $request_data = $request->validated();
         $server_made_data = [
             'employee_id' => auth()->guard('tenant-api')->id(),
@@ -49,7 +50,7 @@ class InvoiceController extends Controller
 
         $invoice = Invoice::create($invoice_data);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new InvoiceResource($invoice),
             'Invoice created successfully',
             201
@@ -64,10 +65,10 @@ class InvoiceController extends Controller
      */
     public function update(StoreInvoiceRequest $request, Invoice $invoice)
     {
-
+        authorizePermission('update invoices', $this->getGuard());
         $invoice->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new InvoiceResource($invoice),
             'Invoice updated successfully'
         );
@@ -80,10 +81,10 @@ class InvoiceController extends Controller
      */
     public function changeStatus(InvoiceChangeStatusRequest $request, Invoice $invoice)
     {
-
+        authorizePermission('change invoices status', $this->getGuard());
         $invoice->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new InvoiceResource($invoice),
             'Invoice status changed successfully'
         );
@@ -96,10 +97,10 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-
+        authorizePermission('destroy invoices', $this->getGuard());
         $invoice->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Invoice deleted successfully'
         );

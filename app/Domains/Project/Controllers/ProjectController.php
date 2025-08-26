@@ -5,20 +5,21 @@ namespace App\Domains\Project\Controllers;
 use App\Domains\Project\Models\Project;
 use App\Domains\Project\Requests\StoreProjectRequest;
 use App\Domains\Project\Resources\ProjectResource;
+use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
+use App\Traits\TenantGuard;
 
 class ProjectController extends Controller
 {
     //
-    use ApiResponse;
+    use TenantGuard;
 
     public function index()
     {
-
+        authorizePermission('view projects', $this->getGuard());
         $projects = Project::with('tasks')->paginate(10);
 
-        return $this->successResponse(
+        return ApiResponse::success(
             ProjectResource::collection($projects),
             'projects retrieved successfully', 200, $projects->nextPageUrl()
         );
@@ -26,10 +27,10 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request)
     {
-
+        authorizePermission('store projects', $this->getGuard());
         $project = Project::create($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new ProjectResource($project),
             'Project created successfully',
             201
@@ -38,10 +39,10 @@ class ProjectController extends Controller
 
     public function update(StoreProjectRequest $request, Project $project)
     {
-
+        authorizePermission('update projects', $this->getGuard());
         $project->update($request->validated());
 
-        return $this->successResponse(
+        return ApiResponse::success(
             new ProjectResource($project),
             'Project updated successfully'
         );
@@ -49,10 +50,10 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-
+        authorizePermission('destroy projects', $this->getGuard());
         $project->delete();
 
-        return $this->successResponse(
+        return ApiResponse::success(
             null,
             'Project deleted successfully'
         );

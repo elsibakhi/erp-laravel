@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Traits;
+namespace App\Services;
 
-trait ApiResponse
+class ApiResponseService
 {
-    protected function successResponse($data = null, $message = '', $code = 200, $next = null)
+    public function success($data = null, $message = '', $code = 200, $next = null)
     {
         return response()->json([
             'success' => true,
@@ -14,7 +14,7 @@ trait ApiResponse
         ], $code);
     }
 
-    protected function errorResponse($message = '', $errors = null, $code = 400, $next = null)
+    public function error($message = '', $errors = null, $code = 400, $next = null)
     {
         return response()->json([
             'success' => false,

@@ -1,8 +1,11 @@
 <?php
 
+use App\Facades\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,5 +26,22 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Exception $e, Request $request) {
+            // Skip validation exceptions
+            if ($e instanceof ValidationException) {
+                return null; // Laravel will handle it normally
+            }
+
+            if ($request->is('api/*')) {
+                $statusCode = method_exists($e, 'getStatusCode')
+                    ? $e->getStatusCode()
+                    : ($e->getCode() > 0 ? $e->getCode() : 500);
+
+                return ApiResponse::error(
+                    $e->getMessage(),
+                    config('app.debug') ? ['file' => $e->getFile()] : null,
+                    $statusCode
+                );
+            }
+        });
     })->create();
